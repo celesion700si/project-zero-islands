@@ -1882,9 +1882,9 @@ window.ProjectZeroGalleries = [{
 
   /* ---------- 開關 ---------- */
   const fallback = {}; const imageFor = gal => window[gal.imageVar] || (fallback[gal.id] ||= schematic());
-  function open(id) {
+  function open(id, startStep = null) {
     g = GALLERIES.find(x => x.id === id); if (!g) return;
-    w = workFor(g.id); returnFocus = document.activeElement; stepIndex = Math.min(w.step || 0, g.steps.length - 1);
+    w = workFor(g.id); returnFocus = document.activeElement; stepIndex = Math.max(0, Math.min(Number.isInteger(startStep) ? startStep : (w.step || 0), g.steps.length - 1));
     Object.entries(g.theme).forEach(([k, v]) => root.style.setProperty('--g-' + k, v));
     $(root, '#gv-title').textContent = `《${g.title}》`;
     $(root, '#gv-sub').textContent = `${g.artist}・${g.year}・${g.collection}`;
@@ -1929,8 +1929,10 @@ window.ProjectZeroGalleries = [{
     }
   };
 
-  const fromHash = () => { const id = location.hash.slice(1); if (GALLERIES.some(x => x.id === id) && root.hidden) {
-    document.getElementById('intro')?.classList.add('gone'); open(id); } };
+  /* 深連結：#nightwatch 進館；#nightwatch/4 直接打開第 4 步 */
+  const fromHash = () => { const [id, st] = location.hash.slice(1).split('/'); if (!GALLERIES.some(x => x.id === id)) return;
+    document.getElementById('intro')?.classList.add('gone');
+    if (root.hidden) open(id, st ? +st - 1 : null); else if (g && g.id === id && st) go(+st - 1); };
   addEventListener('hashchange', fromHash);
   if (location.hash) setTimeout(fromHash, 300);
 })();
