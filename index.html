@@ -1374,12 +1374,12 @@ window.ProjectZeroGalleries = [{
       prompt: '穿越回 1642 年的阿姆斯特丹。如果你有 100 荷蘭盾，你想投資在哪個角色？畫上的編號就是六個角色的位置。', focus: {x: .5, y: .62, z: 1},
       note: '林布蘭打破了「排排站」的肖像傳統，你的選擇將決定你在藝術史上的位置。',
       options: [
-        {label: '01 首席贊助商', n: '01', short: '隊長', flip: true, spot: {x: .482, y: .515}, desc: '隊長 Frans Banninck Cocq：絕對 C 位。黑色西裝配紅腰帶，正在發號施令。'},
-        {label: '02 核心投資者', n: '02', short: '副隊長', spot: {x: .605, y: .55}, desc: '副隊長 Willem van Ruytenburch：自帶光暈的黃色絲絨，這張畫最吸睛的角色。'},
+        {label: '01 首席贊助商', n: '01', short: '隊長', flip: false, pin: {x: .5, y: .545}, spot: {x: .482, y: .515}, desc: '隊長 Frans Banninck Cocq：絕對 C 位。黑色西裝配紅腰帶，正在發號施令。'},
+        {label: '02 核心投資者', n: '02', short: '副隊長', pin: {x: .63, y: .58}, spot: {x: .605, y: .55}, desc: '副隊長 Willem van Ruytenburch：自帶光暈的黃色絲絨，這張畫最吸睛的角色。'},
         {label: '03 標準出資員', n: '03', short: '紅衣火槍手', spot: {x: .218, y: .528}, desc: '紅衣火槍手：付費換得「裝填火藥」的專業動作，帥氣程度不亞於主角。'},
-        {label: '04 匿名背景成員', n: '04', short: '被遮住的臉', spot: {x: .546, y: .511}, desc: '雖然出資，但為了藝術張力，臉部被煙霧與前方頭盔遮擋。'},
+        {label: '04 匿名背景成員', n: '04', short: '被遮住的臉', spot: {x: .48, y: .44}, desc: '雖然出資，但為了藝術張力，臉部大半被前方人物與帽緣遮住。'},
         {label: '05 受邀演繹者', n: '05', short: '鼓手', spot: {x: .968, y: .558}, desc: '鼓手：沒出錢但被林布蘭畫入，因為畫面需要節奏感與聲音。'},
-        {label: '06 聚光燈下的少女', n: '06', short: '少女', spot: {x: .309, y: .612}, desc: '神祕吉祥物：腰掛死雞（火槍手公會標誌），她是整場演出的象徵核心。'}],
+        {label: '06 聚光燈下的少女', n: '06', short: '少女', pin: {x: .335, y: .642}, spot: {x: .309, y: .612}, desc: '神祕吉祥物：腰掛死雞（火槍手公會標誌），她是整場演出的象徵核心。'}],
       why: '你為什麼這樣投？你期待自己在畫裡是什麼樣子？'},
     {id: 'demo', title: 'The Demo 畫中人', pill: '畫中人', set: 'D', more: 'https://sites.google.com/view/ipadart-teach/03-the-demo',
       prompt: '《夜巡》中有 34 個人物。先認識其中四位關鍵角色：點一張卡，畫面會帶你找到他。',
@@ -1678,8 +1678,10 @@ window.ProjectZeroGalleries = [{
 
   /* 每一步一進來的畫面：卡片位置總覽（圖釘可點）、投資角色、挑戰題位置 */
   const locOf = c => c.anchor ? c.anchor : c.spot ? {x: c.spot.x, y: c.spot.y} : (c.points && c.points.length ? {x: c.points[0].x, y: c.points[0].y} : null);
+  // 標籤位置可避開臉部，聚焦圈仍使用人物本身的座標。
+  const optionPin = o => ({...(o.pin || o.spot), n: o.n, flip: o.flip, label: o.short || o.label});
   function overview(s) {
-    if (s.options && s.options.some(o => o.spot)) return {points: s.options.filter(o => o.spot).map(o => ({...o.spot, n: o.n, flip: o.flip, label: o.short || o.label}))};
+    if (s.options && s.options.some(o => o.spot)) return {points: s.options.filter(o => o.spot).map(optionPin)};
     if (s.set) { const pts = []; g.cards.filter(c => c.set === s.set).forEach((c, i) => { const p = locOf(c); if (p && p.x >= 0 && p.x <= 1 && p.y >= 0 && p.y <= 1) pts.push({...p, n: String(i + 1), label: c.short || c.title, go: () => openCard(c, s, false)}); });
       return pts.length ? {points: pts, focus: {x: .5, y: .5, z: 1}} : null; }
     if (s.quiz) { const pts = []; s.quiz.forEach((q, i) => { const v = q.view || {}; const p = v.spot || (v.points && v.points[0]); if (p && p.x >= 0) pts.push({x: p.x, y: p.y, n: 'Q' + (i + 1), label: q.short || `第 ${i + 1} 題`, go: () => present(q.view, s)}); });
@@ -1737,7 +1739,7 @@ window.ProjectZeroGalleries = [{
     if (s.id === 'guess') {
       const opts = el('div', 'gv-options');
       s.options.forEach(o => { const label = o.label || o, b = el('button', 'gv-option'); b.type = 'button'; b.appendChild(el('b', null, label)); if (o.desc) b.appendChild(el('small', null, o.desc));
-        b.setAttribute('aria-pressed', String(w.guess === label)); b.onclick = () => { w.guess = label; persist(); if (o.spot) present({spot: {...o.spot, z: 2.4}, label: o.short || label, points: s.options.filter(x => x.spot && x !== o).map(x => ({...x.spot, n: x.n, flip: x.flip, label: x.short}))}, s); renderStep(); }; opts.appendChild(b); });
+        b.setAttribute('aria-pressed', String(w.guess === label)); b.onclick = () => { w.guess = label; persist(); if (o.spot) present({spot: {...o.spot, z: 2.4}, label: o.short || label, points: s.options.filter(x => x.spot && x !== o).map(optionPin)}, s); renderStep(); }; opts.appendChild(b); });
       stepBox.append(opts, field(s.why, w.guessWhy, v => { w.guessWhy = v; persist(); }, 2));
     }
     if (s.id === 'look' || s.marks) {
