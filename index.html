@@ -1328,7 +1328,14 @@ window.ProjectZeroGalleries = [{
   cards: [
     {id: 'a-candle', set: 'A', spot: {x: .42, y: .065, z: 4.5}, title: '一支蠟燭', see: '畫面正上方的吊燈，只點著一支蠟燭。', read: '婚禮說：點亮的蠟燭象徵上帝在場見證。', tags: ['觀察', '課堂敘述']},
     {id: 'a-signature', set: 'A', spot: {x: .505, y: .215, z: 5.5}, title: '畫家在此', see: '鏡子上方的牆上，寫著一行拉丁文：「揚・范艾克在此」，以及年份 1434。', read: '婚禮說：畫家像證婚人一樣在場。', tags: ['觀察', '課堂敘述']},
-    {id: 'a-roundels', set: 'A', spot: {x: .505, y: .3, z: 4.2}, title: '鏡框十個小圓', see: '凸面鏡的鏡框有十個小圓，畫著耶穌受難的故事。', read: '婚禮說：代表一生一世的祝福。', tags: ['觀察', '課堂敘述']},
+    {id: 'a-roundels', set: 'A', anchor: {x: .505, y: .3}, focus: {x: .505, y: .299, z: 6, compactZ: 4.2},
+      points: [
+        {x: .506, y: .236, n: '1'}, {x: .564, y: .247, n: '2'},
+        {x: .586, y: .278, n: '3'}, {x: .586, y: .318, n: '4'},
+        {x: .559, y: .351, n: '5'}, {x: .506, y: .363, n: '6'},
+        {x: .451, y: .353, n: '7'}, {x: .425, y: .317, n: '8'},
+        {x: .424, y: .278, n: '9'}, {x: .449, y: .246, n: '10'}],
+      title: '鏡框十個小圓', see: '要看的是鏡面外圍的十幅小圓畫，畫著耶穌受難的故事。1–10 依位置順時針標示，方便逐一對照，不代表故事先後。', read: '婚禮說：代表一生一世的祝福。', tags: ['觀察', '課堂敘述']},
     {id: 'a-hands', set: 'A', spot: {x: .55, y: .415, z: 3.4}, title: '牽起的手', see: '兩人在畫面正中央牽手，男子舉起另一隻手。', read: '婚禮說：這是婚禮儀式的姿勢。', tags: ['觀察', '課堂敘述']},
     {id: 'a-dog', set: 'A', spot: {x: .475, y: .9, z: 3.6}, title: '小狗', see: '畫面最下方的正中央，站著一隻小狗。', read: '婚禮說：狗象徵忠誠。', tags: ['觀察', '課堂敘述']},
     {id: 'a-shoes', set: 'A', spot: {x: .07, y: .89, z: 3.6}, title: '兩雙鞋', see: '左下角有一雙木底鞋；房間後方還有一雙紅色的鞋。', read: '課堂中常見的解讀：男主外、女主內。', tags: ['觀察', '課堂敘述']},
@@ -1587,7 +1594,8 @@ window.ProjectZeroGalleries = [{
     layer.style.setProperty('--inv', 1 / view.s);
   }
   function focusOn(p, anim = true) {
-    const r = measure(); view.s = Math.max(MIN_ZOOM, Math.min(8, p.z || 1));
+    const r = measure(), zoom = r.height < 400 && p.compactZ ? p.compactZ : p.z;
+    view.s = Math.max(MIN_ZOOM, Math.min(8, zoom || 1));
     view.tx = r.width / 2 - p.x * view.w0 * view.s; view.ty = r.height / 2 - p.y * view.h0 * view.s; apply(anim);
   }
   function zoomAt(f, cx, cy) {
@@ -1653,7 +1661,7 @@ window.ProjectZeroGalleries = [{
   function renderPins(points) {
     const box = $(root, '#gv-pins'); box.replaceChildren();
     (points || []).forEach((pt, i) => { const d = el('span', 'gv-pin'); d.style.left = pt.x * 100 + '%'; d.style.top = pt.y * 100 + '%';
-      d.append(el('i', null, pt.n || String(i + 1)), el('b', null, pt.label)); if (pt.flip ?? pt.x > .7) d.classList.add('flip');
+      d.append(el('i', null, pt.n || String(i + 1))); if (pt.label) d.append(el('b', null, pt.label)); if (pt.flip ?? pt.x > .7) d.classList.add('flip');
       if (pt.go) { d.classList.add('go'); d.setAttribute('role', 'button'); d.tabIndex = 0; d.onpointerdown = e => e.stopPropagation(); d.onclick = e => { e.stopPropagation(); pt.go(); }; d.onkeydown = e => { if (e.key === 'Enter') pt.go(); }; }
       box.appendChild(d); });
   }
