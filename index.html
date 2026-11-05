@@ -1,4 +1,5 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="zh-Hant"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.gv-entry a.gv-entry-btn{display:inline-flex;align-items:center;text-decoration:none}
+</style></head><body>
 <title>零點群島</title>
 <style>
 .learning-card{width:min(760px,100%)}
@@ -478,7 +479,10 @@ const ISLANDS=[
   lead:"不只教學生做東西，而是讓他們看見「世界是被設計的」，並且相信自己能動手改變它。島上的齒輪工坊一直在轉。",
   ideas:["三種能力：仔細觀察、探索複雜性、發現機會","從物件與系統開始拆解，理解背後的人與目的","最終目標：創造者的能動感 Maker Empowerment"],
   routines:["Parts, Purposes, Complexities 零件・目的・複雜","Parts, People, Interactions","Think, Feel, Care 想・感・在乎","Imagine If… 如果可以…"],
-  try:"拍下教室裡一件平凡物品，在 iPad 上標出它的零件、各自目的，以及你沒想到的複雜處。"},
+  try:"拍下教室裡一件平凡物品，在 iPad 上標出它的零件、各自目的，以及你沒想到的複雜處。",
+  ext:{kicker:"動畫小劇場・林英斌老師的課",title:"《動態也是被設計的：動畫十二法則》",accent:"#e4573d",bg:"#1d1a18",
+    desc:"島上那顆會壓扁、會彈起的紅球，就是第 1 條法則。用設計賦能的「零件・目的・複雜」，看迪士尼動畫師在《The Illusion of Life》裡整理的 12 個動畫法則；最後換你想像「如果可以…」。",
+    url:"https://celesion700si.github.io/ipadart-12-principles/",cta:"進入動畫小劇場 ↗"}},
  {id:"tfu",zh:"為理解而教",en:"Teaching for Understanding",color:"#4a72c2",grass:"#acd47a",glyph:"解",
   meta:[["主要人物","David Perkins、Howard Gardner、Vito Perrone 等"],["年代","1990 年代"]],
   lead:"理解不是記住，而是能靈活運用所知。島上的石拱門有四根柱子，就是設計單元的四個要素。",
@@ -545,6 +549,7 @@ function openPanel(i){
      <div><h4>代表例程與做法</h4><div class="chips">${d.routines.map(x=>`<span class="chip">${x}</span>`).join('')}</div></div>
      <div class="try"><h4>明天課堂試試</h4><p>${d.try}</p></div>
      ${window.ProjectZeroGallery?.entryHTML(d.id)||''}
+     ${d.ext?`<div class="try gv-entry ext" style="--g-accent:${d.ext.accent};--g-bg:${d.ext.bg}"><h4>${d.ext.kicker}</h4><p><b>${d.ext.title}</b>${d.ext.desc}</p><a class="btn btn-sm gv-entry-btn" href="${d.ext.url}" target="_blank" rel="noopener">${d.ext.cta}</a></div>`:''}
      <div class="try"><h4>留下思考的痕跡</h4><p>從這座島出發，練習看・想・疑。</p><button class="btn btn-primary btn-sm" id="p-learning" type="button">開始看・想・疑</button></div>
      <div class="nav-row">
        <button class="btn btn-ghost btn-sm" id="p-prev">← ${ISLANDS[(i+9)%10].zh}</button>
@@ -905,7 +910,17 @@ function createWorld(container){
       animators.push((t,dt)=>{g1.rotation.z+=dt*.6;g2.rotation.z-=dt*.6*10/7});
       g.add(m(G.box(2.2,.12,1),P.wood,[0,.85,1.6]),m(G.box(.1,.85,.1),P.woodD,[-.95,.42,1.2]),m(G.box(.1,.85,.1),P.woodD,[.95,.42,1.2]),m(G.box(.1,.85,.1),P.woodD,[-.95,.42,2]),m(G.box(.1,.85,.1),P.woodD,[.95,.42,2]));
       g.add(m(G.box(.4,.3,.4),'#f2b632',[-.5,1.06,1.6]),m(G.cyl(.15,.15,.4,8),'#3a8fc0',[.4,1.11,1.7]));
-      return {g,avoid:[[0,.5,2.8]],moving:[g1,g2]}},
+      // 動畫十二法則小劇場：擠壓與伸展的紅球、藍色方塊，呼應課堂版的畫面
+      const st=new THREE.Group();st.position.set(2.5,0,-1.1);st.rotation.y=Math.PI-.9;
+      st.add(m(G.box(1.9,.1,1.3),P.woodD,[0,.05,0]),m(G.box(1.8,1.6,.08),'#f3e6dc',[0,.9,-.6]),m(G.box(1.96,.08,.12),P.dark,[0,1.74,-.6]));
+      st.add(m(G.box(.08,1.7,.12),P.dark,[-.94,.88,-.6]),m(G.box(.08,1.7,.12),P.dark,[.94,.88,-.6]));
+      const cube=m(G.box(.42,.42,.42),'#3240c8',[.45,.31,.1]);st.add(cube);
+      for(let k=0;k<6;k++)st.add(m(G.ball(.025,1),'#e4573d',[-.75+k*.12,1.05-Math.abs(k-2.5)*.08,-.5]));
+      const ball=m(G.ball(.21,2),'#e4573d',[-.25,.27,.1]);st.add(ball);
+      animators.push(t=>{const ph=(t*1.3)%1,h=Math.abs(Math.sin(ph*Math.PI));ball.position.y=.31+h*.85;
+        const sq=h<.12?1-(.12-h)*2.6:1+Math.min(.18,(1-h)*.25)*(h<.6?1:0);ball.scale.set(1/Math.sqrt(sq),sq,1/Math.sqrt(sq));});
+      g.add(st);
+      return {g,avoid:[[0,.5,2.8],[2.5,-1.1,1.3]],moving:[g1,g2,st]}},
     tfu(c){const g=new THREE.Group();
       [[-1.6,-.4],[1.6,-.4],[-1.6,.4],[1.6,.4]].forEach(([x,z])=>g.add(m(G.box(.6,2.2,.6),P.stone,[x,1.1,z*1.6])));
       const arc=m(G.torus(1.6,.32,6,16,Math.PI),P.stoneD,[0,2.2,-.64]);arc.scale.z=1.4;g.add(arc);
@@ -1192,7 +1207,7 @@ $('#b-label').onclick=e=>{const on=e.currentTarget.getAttribute('aria-pressed')!
   modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-labelledby','learning-title');
   modal.innerHTML=`<section class="modal-card paper learning-card">
     <div class="modal-top"><div><h3 id="learning-title">看・想・疑</h3><p id="learning-location"></p></div><button class="btn btn-ghost btn-sm" id="learning-close" type="button">關閉</button></div>
-    <p class="learning-note">選一件作品、生活物件或眼前的群島，先安靜觀察，再記下想法與問題。此處為本站設計的練習表單。</p>
+    <p class="learning-note">選一件作品、生活物件或眼前的群島，先安靜觀察，再記下想法與問題。</p>
     <p class="learning-note"><a href="${task.sourceUrl}" target="_blank" rel="noopener noreferrer">Project Zero 原始例程與使用說明（英文）</a></p>
     <div id="learning-tags"></div>
     <form class="learning-form" id="learning-form">
@@ -1202,7 +1217,6 @@ $('#b-label').onclick=e=>{const on=e.currentTarget.getAttribute('aria-pressed')!
       <div class="learning-tools"><button class="btn btn-primary" type="submit">收進學習紀錄</button><button class="btn btn-ghost" type="button" id="learning-save">儲存草稿</button></div>
     </form>
     <p class="learning-status" id="learning-status" role="status" aria-live="polite"></p>
-    <p class="learning-note">草稿與紀錄只存於此瀏覽器，不會傳送給老師。請匯出備份；清除瀏覽資料後可能遺失。登島印章不代表任務完成。</p>
     <section class="learning-history"><h3>我的學習紀錄 <span id="learning-count"></span></h3>
       <div class="learning-tools"><button class="btn btn-ghost btn-sm" id="learning-json" type="button">匯出 JSON 備份</button><button class="btn btn-ghost btn-sm" id="learning-md" type="button">匯出文字筆記</button></div>
       <div id="learning-records"></div>
@@ -1416,7 +1430,7 @@ window.ProjectZeroGalleries = [{
           why: '林布蘭在創作中不斷思考與修改，藉由移動元素來提升整幅畫的動態張力。'}]},
     {id: 'quad', title: 'Four Quadrants 四象限', pill: '四象限', more: 'https://sites.google.com/view/ipadart-teach/07-four-quadrants', marks: true, maxMarks: 3, focus: {x: .5, y: .5, z: 1}, view: {fx: {caption: 'See：直接點畫面，標出你看見的 3 個人、事、物'}},
       prompt: 'See・Think・Wonder・Guard：看見、思考、好奇、守護。',
-      note: '「守護 Guard」是林老師在 Project Zero「看・想・疑」之後延伸的第四層，不是 PZ 官方例程。',
+      note: '「守護 Guard」是林老師在「看・想・疑」之後延伸的第四層。',
       marksLabel: 'See 我看見：在畫上點出你直接看到的 3 個人、事、物。只寫眼睛真的看見的，不寫你想到的。',
       fields: [
         {id: 'feel', label: 'Think 我思考：看完之後，你心裡浮現的 2 個感受是什麼？', hint: '把理性放一邊，讓感覺說話。混亂？緊張？期待？悲傷？', rows: 2},
@@ -1465,7 +1479,7 @@ window.ProjectZeroGalleries = [{
     by: '林英斌老師',
     videoNote: '「Rethink The Night Watch」第二幕，2026 年 4 月 28 日瑞芳國中九年級公開課；LoiLoNote 共編，Goodnotes 的部分另外安排。',
     flow: ['核心命題：在 AI 時代，思考也需要被修復。', '雙峰結構：開場投資 → 認知翻轉（火花時刻）→ 情感收束', '心臟橋段：「林布蘭因這幅畫被告？」→ 四個反證 → 「你會不會覺得不公平？」→ 沉默 3–5 秒', 'See 藍區、Think 黃區、Wonder 粉區：全班畫布逐區累積，最後縮放全覽', '本館依九道任務改編：01、03、04、07、08、09 已轉入；02 作戰地圖收在本面板；05 Kuse、06 One Page 待補'],
-    routines: ['看・想・疑 See–Think–Wonder', '觀點圈 Circle of Viewpoints', '我以前以為……現在我認為…… I Used to Think… Now I Think…', '守護 Guard（林老師延伸，非 PZ 官方例程）'],
+    routines: ['看・想・疑 See–Think–Wonder', '觀點圈 Circle of Viewpoints', '我以前以為……現在我認為…… I Used to Think… Now I Think…', '守護 Guard（林老師延伸的第四層）'],
     sources: [
       ['林老師：九道任務課程全覽（ipadart.net）', 'https://www.ipadart.net/night-watch'],
       ['林老師：02 The Classroom 公開課作戰地圖', 'https://sites.google.com/view/ipadart-teach/02-the-classroom'],
@@ -1848,7 +1862,7 @@ window.ProjectZeroGalleries = [{
     state.records.push({id: crypto.randomUUID?.() || 'g-' + Date.now(), galleryId: g.id, createdAt: new Date().toISOString(),
       guess: w.guess, guessWhy: w.guessWhy, marks: w.marks.map(m => ({...m})), seen: [...w.seen], before: w.before, now: w.now, because: w.because, wonder: w.wonder,
       picks: {...w.picks}, mission: w.mission, guard: w.guard, quiz: {...w.quiz}, fields: Object.fromEntries(g.steps.flatMap(x => x.fields || []).map(f => [f.id, w[f.id] || '']))});
-    setStatus(persist() ? '已收進學習紀錄。紀錄只存在這台裝置的瀏覽器。' : statusText); renderStep();
+    setStatus(persist() ? '已收進學習紀錄。' : statusText); renderStep();
   }
   async function copyText() {
     const text = summaryText();
